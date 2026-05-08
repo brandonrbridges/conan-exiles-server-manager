@@ -1,6 +1,6 @@
 [package]
 name = "cesm-desktop"
-version = "0.0.0"
+version = "1.0.0"
 description = "Conan Exiles | Server Manager Enhanced — desktop app."
 edition.workspace = true
 rust-version.workspace = true

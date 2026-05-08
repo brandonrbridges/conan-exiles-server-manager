@@ -1,6 +1,6 @@
 {
   "name": "conan-exiles-server-manager",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Free, open-source desktop control panel for Conan Exiles Enhanced (UE5) dedicated servers.",
