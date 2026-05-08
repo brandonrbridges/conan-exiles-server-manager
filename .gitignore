@@ -1,0 +1,42 @@
+# macOS
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node
+node_modules/
+.pnpm-store/
+dist/
+build/
+coverage/
+.next/
+*.log
+.npm/
+
+# Rust / Tauri
+target/
+Cargo.lock.bak
+**/*.rs.bk
+src-tauri/target/
+src-tauri/Cargo.lock
+
+# Tauri build outputs
+src-tauri/gen/
+*.dmg
+*.msi
+*.exe
+*.app
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Misc
+*.tmp
+.turbo/
+.cache/
