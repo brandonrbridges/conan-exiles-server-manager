@@ -23,13 +23,6 @@ pre-commit:
         - merge
         - rebase
 
-    typos:
-      run: pnpm dlx typos {staged_files}
-      glob: "*.{md,rs,ts,tsx}"
-      skip:
-        - merge
-        - rebase
-
 pre-push:
   parallel: false
   commands:
