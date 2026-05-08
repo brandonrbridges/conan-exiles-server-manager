@@ -1,4 +1,5 @@
 import { ServerFormDialog } from '@/components/server-form-dialog'
+import { SettingsSheet } from '@/components/settings-sheet'
 import { Sidebar } from '@/components/sidebar'
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { useServers } from '@/hooks/use-servers'
@@ -11,6 +12,7 @@ function AppShell() {
 	const { data: servers = [], isLoading } = useServers()
 	const [selectedId, setSelectedId] = useState<string | null>(null)
 	const [addOpen, setAddOpen] = useState(false)
+	const [settingsOpen, setSettingsOpen] = useState(false)
 
 	// Auto-select the first server when servers load and nothing is selected.
 	useEffect(() => {
@@ -32,9 +34,7 @@ function AppShell() {
 				selectedId={selectedId}
 				onSelect={setSelectedId}
 				onAdd={() => setAddOpen(true)}
-				onOpenSettings={() => {
-					/* settings drawer is a follow-up PR */
-				}}
+				onOpenSettings={() => setSettingsOpen(true)}
 			/>
 
 			<section className="flex-1 overflow-hidden">
@@ -50,6 +50,7 @@ function AppShell() {
 			</section>
 
 			<ServerFormDialog open={addOpen} onOpenChange={setAddOpen} />
+			<SettingsSheet open={settingsOpen} onOpenChange={setSettingsOpen} />
 		</div>
 	)
 }
