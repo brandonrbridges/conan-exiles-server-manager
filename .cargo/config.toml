@@ -1,0 +1,10 @@
+# Workspace-wide cargo config.
+#
+# `TS_RS_EXPORT_DIR` tells ts-rs where to drop the generated TypeScript
+# bindings — see `apps/desktop/src/types/generated/` for the output.
+# Resolved relative to the workspace root (the directory containing this
+# config file). Keeping it in one place avoids the brittle per-source-file
+# relative paths that ts-rs's `export_to` attribute imposes.
+
+[env]
+TS_RS_EXPORT_DIR = { value = "apps/desktop/src/types/generated", relative = true }

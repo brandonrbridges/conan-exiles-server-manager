@@ -13,7 +13,7 @@
       "**/target",
       "**/node_modules",
       "**/src-tauri/gen",
-      "**/src/types/generated.ts",
+      "**/src/types/generated/**",
       "pnpm-lock.yaml"
     ]
   },

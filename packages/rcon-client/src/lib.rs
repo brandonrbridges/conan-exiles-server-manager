@@ -20,9 +20,11 @@ mod error;
 mod handle;
 mod registry;
 mod state;
+mod test_connection;
 
 pub use config::{RconConfig, ServerId};
 pub use error::RconError;
 pub use handle::ConnectionHandle;
 pub use registry::ConnectionRegistry;
 pub use state::ConnectionState;
+pub use test_connection::test_connection;

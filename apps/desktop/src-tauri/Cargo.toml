@@ -21,4 +21,12 @@ tauri-plugin-shell = "2"
 serde = { workspace = true }
 serde_json = { workspace = true }
 tracing = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["rt-multi-thread", "sync", "macros", "time"] }
+rusqlite = { version = "0.31", features = ["bundled"] }
+rusqlite_migration = "1.2"
+keyring = { version = "3", features = ["apple-native", "windows-native", "linux-native"] }
+secrecy = { version = "0.10", features = ["serde"] }
+ts-rs = { workspace = true }
+uuid = { version = "1", features = ["v4", "serde"] }
 rcon-client = { path = "../../../packages/rcon-client" }

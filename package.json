@@ -27,6 +27,8 @@
     "format": "biome format --write .",
     "typecheck": "pnpm --filter @cesm/desktop typecheck",
     "test": "pnpm --filter @cesm/desktop test",
+    "test:rust": "cargo test --workspace",
+    "typegen": "cargo test --workspace export_bindings_ && node scripts/generate-types-barrel.mjs",
     "prepare": "lefthook install || true"
   },
   "devDependencies": {
