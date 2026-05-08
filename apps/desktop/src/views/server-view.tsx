@@ -1,7 +1,7 @@
 import { BroadcastComposer } from '@/components/broadcast-composer'
 import { ConsoleView } from '@/components/console-view'
 import { DeleteServerDialog } from '@/components/delete-server-dialog'
-import { PlayerTable } from '@/components/player-table'
+import { PlayersSection } from '@/components/players-section'
 import { ServerFormDialog } from '@/components/server-form-dialog'
 import { ServerHeroStats } from '@/components/server-hero-stats'
 import { StatusDot } from '@/components/status-dot'
@@ -73,7 +73,7 @@ export function ServerView({ server, onDeleted }: ServerViewProps) {
 							<ServerHeroStats serverId={server.id} />
 							<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
 								<div className="lg:col-span-2">
-									<PlayerTable serverId={server.id} />
+									<PlayersSection serverId={server.id} />
 								</div>
 								<div className="flex flex-col gap-4">
 									<BroadcastComposer serverId={server.id} />
