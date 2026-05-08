@@ -45,9 +45,10 @@ async fn auth_failure_lands_in_failed_state() {
     let settled = handle.wait_until_settled().await;
     assert_eq!(settled, ConnectionState::Failed);
 
-    // Any send while Failed returns NotConnected immediately.
+    // Any send while Failed returns AuthFailed immediately, not a fresh
+    // network attempt — credentials are known bad until a re-open.
     let err = handle.send("listplayers").await.unwrap_err();
-    assert!(matches!(err, rcon_client::RconError::NotConnected));
+    assert!(matches!(err, rcon_client::RconError::AuthFailed));
 
     handle.close().await;
     server.stop().await;

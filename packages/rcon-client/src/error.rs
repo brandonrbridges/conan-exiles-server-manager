@@ -28,6 +28,12 @@ pub enum RconError {
     /// Registry lookup miss — `send`/`close` against an unknown `ServerId`.
     #[error("unknown server")]
     UnknownServer,
+
+    /// Conan's RCON karma rate limiter rejected the connection. Bumping
+    /// `RconMaxKarma` in `Game.ini` raises the ceiling; the default of 60
+    /// is conservative for production but cramped for development.
+    #[error("rate limited")]
+    RateLimited,
 }
 
 impl From<rcon::Error> for RconError {
@@ -43,4 +49,10 @@ impl From<rcon::Error> for RconError {
             )),
         }
     }
+}
+
+/// Conan signals rate-limit denial as the *body* of a command response,
+/// not as a transport error. Detect it on the way out of `send`.
+pub(crate) fn is_rate_limit_response(body: &str) -> bool {
+    body.trim() == "Too many commands, try again later."
 }

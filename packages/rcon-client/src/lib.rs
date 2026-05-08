@@ -18,6 +18,7 @@
 mod config;
 mod error;
 mod handle;
+pub mod parsers;
 mod registry;
 mod state;
 mod test_connection;
