@@ -18,7 +18,7 @@ High-level system map for Conan Exiles | Server Manager Enhanced. For the v0 spe
 │                                   └────────────────────────┘    │
 └──────────────────────────────────────────────────────────────────┘
                                               │
-                                              │ TCP / BattlEye RCON
+                                              │ TCP / Source RCON
                                               ▼
                               ┌──────────────────────────────┐
                               │ Conan Exiles Enhanced server │
@@ -42,7 +42,7 @@ High-level system map for Conan Exiles | Server Manager Enhanced. For the v0 spe
 
 ### Shared types (`packages/rcon-client/`)
 
-- Reusable Rust crate wrapping the upstream `rcon` crate with reconnect, heartbeat, and BattlEye-specific quirk handling.
+- Reusable Rust crate wrapping the upstream `rcon` crate (Source RCON over TCP) with a per-server connection registry, reconnect-with-backoff, per-call timeouts, and cooperative cancellation.
 - TypeScript types generated via `ts-rs` so the UI sees the same shapes as the Rust core. Build step regenerates `apps/desktop/src/types/generated.ts`.
 
 ## Data flow: a typical "kick player" action
