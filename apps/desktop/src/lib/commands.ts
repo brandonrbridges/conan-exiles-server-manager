@@ -1,8 +1,13 @@
 import type {
 	AppError,
+	BanInput,
+	BannedPlayer,
 	ConnectionState,
+	KickInput,
+	Player,
 	Server,
 	ServerInput,
+	ServerOverview,
 	TestConnectionInput,
 } from '@/types/generated'
 import { invoke } from '@tauri-apps/api/core'
@@ -15,26 +20,33 @@ import { invoke } from '@tauri-apps/api/core'
  * for typed handling.
  */
 export const commands = {
+	// --- server CRUD + connection lifecycle ---
 	listServers: () => invoke<Server[]>('list_servers'),
-
 	saveServer: (input: ServerInput) => invoke<Server>('save_server', { input }),
-
 	deleteServer: (id: string) => invoke<void>('delete_server', { id }),
-
 	testConnection: (input: TestConnectionInput) => invoke<void>('test_connection', { input }),
-
 	openConnection: (serverId: string) => invoke<void>('open_connection', { serverId }),
-
 	closeConnection: (serverId: string) => invoke<void>('close_connection', { serverId }),
-
 	connectionState: (serverId: string) => invoke<ConnectionState>('connection_state', { serverId }),
-
 	sendCommand: (serverId: string, command: string) =>
 		invoke<string>('send_command', { serverId, command }),
 
+	// --- app settings ---
 	getSetting: (key: string) => invoke<string | null>('get_setting', { key }),
-
 	setSetting: (key: string, value: string) => invoke<void>('set_setting', { key, value }),
+
+	// --- live admin (per-server) ---
+	listPlayers: (serverId: string) => invoke<Player[]>('list_players', { serverId }),
+	listBans: (serverId: string) => invoke<BannedPlayer[]>('list_bans', { serverId }),
+	kickPlayer: (serverId: string, input: KickInput) =>
+		invoke<string>('kick_player', { serverId, input }),
+	banPlayer: (serverId: string, input: BanInput) =>
+		invoke<string>('ban_player', { serverId, input }),
+	unbanPlayer: (serverId: string, userOrPlatformId: string) =>
+		invoke<string>('unban_player', { serverId, userOrPlatformId }),
+	broadcast: (serverId: string, message: string) =>
+		invoke<void>('broadcast', { serverId, message }),
+	serverOverview: (serverId: string) => invoke<ServerOverview>('server_overview', { serverId }),
 } as const
 
 /**
@@ -64,6 +76,8 @@ export function formatError(err: unknown): string {
 				return 'Not connected to the server.'
 			case 'timeout':
 				return 'The server took too long to respond.'
+			case 'rate_limited':
+				return 'Server is rate-limiting RCON requests. Try again in a moment.'
 			case 'storage':
 				return `Storage error: ${app.message}`
 			case 'keychain':
