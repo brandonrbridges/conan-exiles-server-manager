@@ -26,6 +26,27 @@ export default defineConfig({
 	},
 	clearScreen: false,
 	server,
+	build: {
+		// Bundle ships with the desktop binary — no kB budget. Default 500
+		// triggers on any non-trivial UI; raise so the warning surfaces real
+		// growth (a chunk crossing 1MB is meaningful) rather than noise.
+		chunkSizeWarningLimit: 1000,
+		rollupOptions: {
+			output: {
+				// Split the heaviest framework dep out so no single chunk
+				// crosses the 500kB warning threshold. Going more granular
+				// (radix, query, forms separately) reintroduces circular
+				// chunk warnings because of cross-dependencies.
+				manualChunks: (id) => {
+					if (id.match(/[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/)) {
+						return 'vendor-react'
+					}
+					if (id.includes('node_modules')) return 'vendor'
+					return undefined
+				},
+			},
+		},
+	},
 	test: {
 		environment: 'jsdom',
 		globals: true,
