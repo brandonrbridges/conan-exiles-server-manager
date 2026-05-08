@@ -59,7 +59,7 @@ export function ServerView({ server, onDeleted }: ServerViewProps) {
 			<main className="flex flex-1 flex-col overflow-hidden">
 				{state === 'open' ? (
 					<Tabs defaultValue="dashboard" className="flex flex-1 flex-col overflow-hidden">
-						<div className="border-b border-border px-8 pt-3">
+						<div className="border-b border-border px-8 py-3">
 							<TabsList>
 								<TabsTrigger value="dashboard">Dashboard</TabsTrigger>
 								<TabsTrigger value="console">Console</TabsTrigger>
