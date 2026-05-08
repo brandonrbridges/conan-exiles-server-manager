@@ -1,12 +1,13 @@
+import { BroadcastComposer } from '@/components/broadcast-composer'
 import { DeleteServerDialog } from '@/components/delete-server-dialog'
+import { PlayerTable } from '@/components/player-table'
 import { ServerFormDialog } from '@/components/server-form-dialog'
+import { ServerHeroStats } from '@/components/server-hero-stats'
 import { StatusDot } from '@/components/status-dot'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import { useActiveConnection } from '@/hooks/use-active-connection'
 import type { ConnectionState, Server } from '@/types/generated'
-import { Pencil, Power, Trash2 } from 'lucide-react'
+import { Pencil, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 const STATE_COPY: Record<ConnectionState, string> = {
@@ -37,7 +38,9 @@ export function ServerView({ server, onDeleted }: ServerViewProps) {
 						<StatusDot state={state} className="size-3" />
 						<h1 className="text-2xl font-semibold tracking-tight">{server.name}</h1>
 					</div>
-					<p className="text-sm text-muted-foreground">{STATE_COPY[state]}</p>
+					<p className="text-sm text-muted-foreground">
+						{server.host}:{server.rcon_port} · {STATE_COPY[state]}
+					</p>
 				</div>
 				<div className="flex gap-2">
 					<Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
@@ -51,45 +54,22 @@ export function ServerView({ server, onDeleted }: ServerViewProps) {
 				</div>
 			</header>
 
-			<main className="flex-1 px-8 py-6">
-				<Card>
-					<CardContent className="flex flex-col gap-4 p-6">
-						<div className="grid grid-cols-2 gap-4">
-							<DetailRow label="Host" value={server.host} />
-							<DetailRow label="RCON port" value={String(server.rcon_port)} />
-							<DetailRow
-								label="Admin password"
-								value={server.has_admin_pw ? 'Stored' : 'Not set'}
-							/>
-							<DetailRow
-								label="Created"
-								value={new Date(Number(server.created_at) * 1000).toLocaleString()}
-							/>
-						</div>
-
-						<Separator />
-
-						<div className="flex items-center justify-between">
-							<div className="flex items-center gap-3">
-								<Power className="size-4 text-muted-foreground" />
-								<div className="flex flex-col">
-									<span className="text-sm font-medium">Connection</span>
-									<span className="text-xs text-muted-foreground">
-										Opens automatically while this server is selected.
-									</span>
-								</div>
+			<main className="flex flex-1 flex-col gap-6 px-8 py-6">
+				{state === 'open' ? (
+					<>
+						<ServerHeroStats serverId={server.id} />
+						<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+							<div className="lg:col-span-2">
+								<PlayerTable serverId={server.id} />
 							</div>
-							<div className="flex items-center gap-2">
-								<StatusDot state={state} />
-								<span className="text-sm">{STATE_COPY[state]}</span>
+							<div className="flex flex-col gap-4">
+								<BroadcastComposer serverId={server.id} />
 							</div>
 						</div>
-					</CardContent>
-				</Card>
-
-				<p className="mt-6 text-xs text-muted-foreground">
-					Live admin (players, broadcast, console) lands in the next release.
-				</p>
+					</>
+				) : (
+					<NotReadyNotice state={state} />
+				)}
 			</main>
 
 			<ServerFormDialog open={editOpen} onOpenChange={setEditOpen} server={server} />
@@ -103,11 +83,17 @@ export function ServerView({ server, onDeleted }: ServerViewProps) {
 	)
 }
 
-function DetailRow({ label, value }: { label: string; value: string }) {
+function NotReadyNotice({ state }: { state: ConnectionState }) {
+	const copy: Partial<Record<ConnectionState, string>> = {
+		disconnected: 'Open this server to connect.',
+		connecting: 'Connecting to the server… player list will appear once the handshake completes.',
+		reconnecting: 'Reconnecting to the server. Will resume automatically.',
+		failed:
+			'The server rejected this RCON password. Edit the server and re-enter the password to continue.',
+	}
 	return (
-		<div className="flex flex-col gap-1">
-			<span className="text-xs uppercase tracking-wide text-muted-foreground">{label}</span>
-			<span className="text-sm font-medium">{value}</span>
+		<div className="rounded-md border border-dashed border-border bg-muted/40 p-6 text-sm text-muted-foreground">
+			{copy[state] ?? 'Standing by…'}
 		</div>
 	)
 }

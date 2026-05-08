@@ -39,6 +39,13 @@ pub fn run() {
             commands::servers::send_command,
             commands::settings::get_setting,
             commands::settings::set_setting,
+            commands::players::list_players,
+            commands::players::list_bans,
+            commands::players::kick_player,
+            commands::players::ban_player,
+            commands::players::unban_player,
+            commands::players::broadcast,
+            commands::server_overview::server_overview,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
