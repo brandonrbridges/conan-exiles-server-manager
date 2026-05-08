@@ -15,9 +15,32 @@ env:
   RUSTFLAGS: "-D warnings"
 
 jobs:
+  detect:
+    name: Detect scaffold
+    runs-on: ubuntu-latest
+    outputs:
+      has-rust: ${{ steps.check.outputs.has-rust }}
+      has-ts: ${{ steps.check.outputs.has-ts }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        shell: bash
+        run: |
+          if [ -f apps/desktop/src-tauri/Cargo.toml ]; then
+            echo "has-rust=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-rust=false" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -f package.json ]; then
+            echo "has-ts=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-ts=false" >> "$GITHUB_OUTPUT"
+          fi
+
   rust:
     name: Rust ${{ matrix.os }}
-    if: hashFiles('apps/desktop/src-tauri/Cargo.toml') != ''
+    needs: detect
+    if: needs.detect.outputs.has-rust == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -52,7 +75,8 @@ jobs:
 
   ts:
     name: TypeScript / UI
-    if: hashFiles('package.json') != ''
+    needs: detect
+    if: needs.detect.outputs.has-ts == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -79,8 +103,8 @@ jobs:
 
   tauri-build:
     name: Tauri build smoke ${{ matrix.os }}
-    if: hashFiles('apps/desktop/src-tauri/Cargo.toml') != ''
-    needs: [rust, ts]
+    needs: [detect, rust, ts]
+    if: needs.detect.outputs.has-rust == 'true' && needs.detect.outputs.has-ts == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -108,6 +132,3 @@ jobs:
 
       - name: Tauri debug build (smoke test)
         run: pnpm tauri build --debug
-        env:
-          # Smoke build does not need signing
-          TAURI_SKIP_DEVSERVER_CHECK: "true"
