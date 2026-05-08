@@ -1,0 +1,17 @@
+[package]
+name = "rcon-client"
+version = "0.0.0"
+description = "RCON client wrapper for Conan Exiles | Server Manager Enhanced."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[lib]
+name = "rcon_client"
+path = "src/lib.rs"
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }

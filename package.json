@@ -1,0 +1,39 @@
+{
+  "name": "conan-exiles-server-manager",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Free, open-source desktop control panel for Conan Exiles Enhanced (UE5) dedicated servers.",
+  "license": "MIT",
+  "author": "Brandon Bridges",
+  "homepage": "https://github.com/brandonrbridges/conan-exiles-server-manager",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brandonrbridges/conan-exiles-server-manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/brandonrbridges/conan-exiles-server-manager/issues"
+  },
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @cesm/desktop dev",
+    "build": "pnpm --filter @cesm/desktop build",
+    "tauri": "pnpm --filter @cesm/desktop tauri",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "typecheck": "pnpm --filter @cesm/desktop typecheck",
+    "test": "pnpm --filter @cesm/desktop test",
+    "prepare": "lefthook install || true"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@commitlint/cli": "^19.6.0",
+    "@commitlint/config-conventional": "^19.6.0",
+    "lefthook": "^1.10.10",
+    "typescript": "^5.7.3"
+  }
+}
