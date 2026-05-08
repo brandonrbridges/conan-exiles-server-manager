@@ -1,0 +1,55 @@
+name: Feature request
+description: Suggest a new feature or improvement
+labels: ["type:feat", "status:needs-info"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing, please skim the [Roadmap](https://github.com/users/brandonrbridges/projects) — your idea may already be planned.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the user pain point or workflow gap.
+      placeholder: As a server admin running modded PvE, I currently have to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What would the ideal experience look like?
+      placeholder: A button on the player row that...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other approaches you thought about, and why this is better.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Which tier does this belong to?
+      description: Helps with planning. Pick your best guess.
+      options:
+        - v0 (live admin)
+        - v1 (logs / config / mods)
+        - v2 (Pro hosted features)
+        - Not sure
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Screenshots, links, related issues, anything else.
+    validations:
+      required: false

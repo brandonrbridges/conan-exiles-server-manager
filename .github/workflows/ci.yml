@@ -1,0 +1,113 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Cancel in-progress runs for the same branch when a new push lands
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-D warnings"
+
+jobs:
+  rust:
+    name: Rust ${{ matrix.os }}
+    if: hashFiles('apps/desktop/src-tauri/Cargo.toml') != ''
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            apps/desktop/src-tauri
+            packages/rcon-client
+
+      - name: cargo fmt --check
+        run: cargo fmt --all --check
+        working-directory: apps/desktop/src-tauri
+
+      - name: cargo clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
+        working-directory: apps/desktop/src-tauri
+
+      - name: cargo test
+        run: cargo test --all-features
+        working-directory: apps/desktop/src-tauri
+
+  ts:
+    name: TypeScript / UI
+    if: hashFiles('package.json') != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Biome check
+        run: pnpm biome check .
+
+      - name: Type-check
+        run: pnpm typecheck
+
+      - name: Vitest
+        run: pnpm test
+
+  tauri-build:
+    name: Tauri build smoke ${{ matrix.os }}
+    if: hashFiles('apps/desktop/src-tauri/Cargo.toml') != ''
+    needs: [rust, ts]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Tauri debug build (smoke test)
+        run: pnpm tauri build --debug
+        env:
+          # Smoke build does not need signing
+          TAURI_SKIP_DEVSERVER_CHECK: "true"

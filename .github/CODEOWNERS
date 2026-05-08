@@ -1,0 +1,9 @@
+# Default owner for everything
+*       @brandonrbridges
+
+# Future ownership areas — uncomment and reassign as contributors take on areas
+# /apps/desktop/src/        @brandonrbridges
+# /apps/desktop/src-tauri/  @brandonrbridges
+# /packages/rcon-client/    @brandonrbridges
+# /docs/                    @brandonrbridges
+# /.github/                 @brandonrbridges

@@ -1,0 +1,54 @@
+# https://github.com/evilmartians/lefthook
+# Runs locally on git events. Skip with `git commit --no-verify` only in emergencies.
+#
+# Install: pnpm dlx lefthook install
+# (pnpm install runs `lefthook install` automatically via the postinstall script)
+
+pre-commit:
+  parallel: true
+  commands:
+    rust-fmt:
+      glob: "*.rs"
+      run: cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --all -- --check {staged_files}
+      stage_fixed: true
+      skip:
+        - merge
+        - rebase
+
+    biome-check:
+      glob: "*.{ts,tsx,js,jsx,json,jsonc}"
+      run: pnpm biome check --write --no-errors-on-unmatched {staged_files}
+      stage_fixed: true
+      skip:
+        - merge
+        - rebase
+
+    typos:
+      run: pnpm dlx typos {staged_files}
+      glob: "*.{md,rs,ts,tsx}"
+      skip:
+        - merge
+        - rebase
+
+pre-push:
+  parallel: false
+  commands:
+    rust-clippy:
+      run: cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --all-targets --all-features -- -D warnings
+      skip:
+        - merge
+        - rebase
+
+    typecheck:
+      run: pnpm typecheck
+      skip:
+        - merge
+        - rebase
+
+commit-msg:
+  commands:
+    conventional:
+      run: pnpm dlx @commitlint/cli --edit {1}
+      skip:
+        - merge
+        - rebase

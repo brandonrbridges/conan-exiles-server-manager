@@ -1,0 +1,32 @@
+# Normalise line endings on commit
+* text=auto eol=lf
+
+# Force LF for shell, makefiles, code
+*.sh   text eol=lf
+*.rs   text eol=lf
+*.toml text eol=lf
+*.ts   text eol=lf
+*.tsx  text eol=lf
+*.js   text eol=lf
+*.jsx  text eol=lf
+*.json text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.md   text eol=lf
+
+# Force CRLF on Windows-only assets
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+*.ps1  text eol=crlf
+
+# Treat as binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.icns binary
+*.dmg  binary
+*.msi  binary
+*.exe  binary
+*.app  binary
