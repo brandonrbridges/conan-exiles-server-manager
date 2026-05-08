@@ -99,6 +99,39 @@ jobs:
       - name: Vitest
         run: pnpm test
 
+  types:
+    name: Generated TypeScript bindings drift
+    needs: [detect, rust]
+    if: needs.detect.outputs.has-rust == 'true' && needs.detect.outputs.has-ts == 'true'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            apps/desktop/src-tauri
+            packages/rcon-client
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Regenerate bindings + check for drift
+        run: |
+          pnpm typegen
+          if ! git diff --exit-code -- apps/desktop/src/types/generated/; then
+            echo "::error::Generated TypeScript bindings are out of date. Run \`pnpm typegen\` locally and commit the result."
+            exit 1
+          fi
+
   tauri-build:
     name: Tauri build smoke ${{ matrix.os }}
     needs: [detect, rust, ts]
