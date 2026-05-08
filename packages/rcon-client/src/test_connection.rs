@@ -9,10 +9,14 @@ use crate::{RconConfig, RconError};
 /// Used by the UI's "Test connection" button. Returns `Ok(())` if the
 /// configured host accepts the password, otherwise the typed reason.
 /// Honours [`RconConfig::connect_timeout`].
+///
+/// Conan-specific: factorio_quirks enabled (single-packet response mode).
+/// Conan ignores the empty-marker packet that multi-packet mode uses to
+/// terminate responses, hanging the client until timeout.
 pub async fn test_connection(config: &RconConfig) -> Result<(), RconError> {
     let connect_fut = rcon::Connection::<TcpStream>::builder()
         .enable_minecraft_quirks(false)
-        .enable_factorio_quirks(false)
+        .enable_factorio_quirks(true)
         .connect(
             (config.host.as_str(), config.port),
             config.password.expose_secret(),

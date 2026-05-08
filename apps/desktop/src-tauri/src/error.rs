@@ -33,6 +33,9 @@ pub enum AppError {
     #[error("rcon error: {message}")]
     Rcon { message: String },
 
+    #[error("rate limited; raise RconMaxKarma in Game.ini if this happens often")]
+    RateLimited,
+
     #[error("invalid input: {message}")]
     Invalid { message: String },
 
@@ -71,6 +74,7 @@ impl From<rcon_client::RconError> for AppError {
             rcon_client::RconError::NotConnected => Self::NotConnected,
             rcon_client::RconError::Timeout => Self::Timeout,
             rcon_client::RconError::UnknownServer => Self::ServerNotFound,
+            rcon_client::RconError::RateLimited => Self::RateLimited,
             rcon_client::RconError::Transport(e) => Self::Rcon {
                 message: e.to_string(),
             },

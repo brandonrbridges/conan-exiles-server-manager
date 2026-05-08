@@ -2,7 +2,9 @@
 // It re-exports every ts-rs binding in this directory.
 
 export type { AppError } from './AppError'
+export type { BannedPlayer } from './BannedPlayer'
 export type { ConnectionState } from './ConnectionState'
+export type { Player } from './Player'
 export type { Server } from './Server'
 export type { ServerInput } from './ServerInput'
 export type { TestConnectionInput } from './TestConnectionInput'
