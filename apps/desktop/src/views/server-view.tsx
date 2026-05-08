@@ -1,10 +1,12 @@
 import { BroadcastComposer } from '@/components/broadcast-composer'
+import { ConsoleView } from '@/components/console-view'
 import { DeleteServerDialog } from '@/components/delete-server-dialog'
 import { PlayerTable } from '@/components/player-table'
 import { ServerFormDialog } from '@/components/server-form-dialog'
 import { ServerHeroStats } from '@/components/server-hero-stats'
 import { StatusDot } from '@/components/status-dot'
 import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useActiveConnection } from '@/hooks/use-active-connection'
 import type { ConnectionState, Server } from '@/types/generated'
 import { Pencil, Trash2 } from 'lucide-react'
@@ -31,7 +33,7 @@ export function ServerView({ server, onDeleted }: ServerViewProps) {
 	const [deleteOpen, setDeleteOpen] = useState(false)
 
 	return (
-		<div className="flex h-screen flex-col overflow-y-auto">
+		<div className="flex h-screen flex-col overflow-hidden">
 			<header className="flex items-start justify-between gap-4 border-b border-border px-8 py-6">
 				<div className="flex flex-col gap-2">
 					<div className="flex items-center gap-3">
@@ -54,21 +56,39 @@ export function ServerView({ server, onDeleted }: ServerViewProps) {
 				</div>
 			</header>
 
-			<main className="flex flex-1 flex-col gap-6 px-8 py-6">
+			<main className="flex flex-1 flex-col overflow-hidden">
 				{state === 'open' ? (
-					<>
-						<ServerHeroStats serverId={server.id} />
-						<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-							<div className="lg:col-span-2">
-								<PlayerTable serverId={server.id} />
-							</div>
-							<div className="flex flex-col gap-4">
-								<BroadcastComposer serverId={server.id} />
-							</div>
+					<Tabs defaultValue="dashboard" className="flex flex-1 flex-col overflow-hidden">
+						<div className="border-b border-border px-8 pt-3">
+							<TabsList>
+								<TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+								<TabsTrigger value="console">Console</TabsTrigger>
+							</TabsList>
 						</div>
-					</>
+
+						<TabsContent
+							value="dashboard"
+							className="flex flex-1 flex-col gap-6 overflow-y-auto px-8 py-6"
+						>
+							<ServerHeroStats serverId={server.id} />
+							<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+								<div className="lg:col-span-2">
+									<PlayerTable serverId={server.id} />
+								</div>
+								<div className="flex flex-col gap-4">
+									<BroadcastComposer serverId={server.id} />
+								</div>
+							</div>
+						</TabsContent>
+
+						<TabsContent value="console" className="flex flex-1 flex-col overflow-hidden px-8 py-6">
+							<ConsoleView serverId={server.id} />
+						</TabsContent>
+					</Tabs>
 				) : (
-					<NotReadyNotice state={state} />
+					<div className="flex-1 px-8 py-6">
+						<NotReadyNotice state={state} />
+					</div>
 				)}
 			</main>
 
